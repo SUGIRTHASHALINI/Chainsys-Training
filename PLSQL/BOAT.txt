@@ -1,0 +1,81 @@
+SELECT * FROM SAILORS_2610;
+SELECT * FROM BOATS_2610;
+SELECT * FROM RESERVES_2610 ;
+-------------------------------------------------------------------------------------------------------------------------
+
+--1)Write a query to find the name of the sailors who reserved red boat
+SELECT SNAME FROM ((RESERVES_2610 R INNER JOIN SAILORS_2610 S ON R.SID=S.SID)
+INNER JOIN BOATS_2610 B ON R.BID=B.BID) WHERE COLOR='red';
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--2) Write a query to find the names of sailors who have reserved a red and a green boat.
+SELECT A.SNAME FROM SAILORS_2610 A,BOATS_2610 B,RESERVES_2610 C WHERE A.SID=C.SID AND B.BID=C.BID AND B.COLOR='RED' 
+AND A.SID IN(SELECT A1.SID FROM SAILORS_2610 A1,BOATS_2610 B1,RESERVES_2610 C1 WHERE A1.SID=C1.SID AND B1.BID=C1.BID 
+AND B1.COLOR='GREEN');
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--(SELECT R.SID FROM BOATS_2610 B, RESERVES_2610 R WHERE B.BID=R.BID AND COLOR='green');
+ SELECT S1.sname FROM sailors_2610 S1, reserves_2610 R1, boats_2610 B1 WHERE S1.sid=R1.sid 
+AND R1.bid=B1.bid AND B1.color='red' and s1.sid in(SELECT S2.sid FROM sailors_2610 S2, 
+reserves_2610 R2, boats_2611 B2 WHERE S2.sid=R2.sid AND R2.bid=B2.bid AND B2.color='green') ;
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--3) Write a query to find the name of sailor who reserved 1 boat
+SELECT SNAME FROM SAILORS_2610 WHERE SID IN(SELECT SID FROM RESERVES_2610 GROUP BY SID HAVING COUNT(sid) =1);
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--4) Write a query to find the sids of all sailors who have reserved red boats but not green boats.
+SELECT S1.sname FROM sailors_2610 S1, reserves_2610 R1, boats_2610 B1 WHERE S1.sid=R1.sid 
+AND R1.bid=B1.bid AND B1.color='red' and s1.sid NOT in(SELECT S2.sid FROM sailors_2610 S2, 
+reserves_2610 R2, boats_2611 B2 WHERE S2.sid=R2.sid AND R2.bid=B2.bid AND B2.color='green') ;
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--5) Write a query to find the sailors with the highest rating
+SELECT SNAME FROM SAILORS_2610 WHERE RATING=(SELECT MAX(RATING) FROM SAILORS_2610);
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--6) Write a query to find  the number of sailors elligible to vote
+SELECT COUNT( DISTINCT SNAME) FROM SAILORS_2610 WHERE AGE>18;
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--7) Write a query to count different sailors name
+SELECT COUNT( DISTINCT SNAME) FROM SAILORS_2610;
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--8) Write a query to find  the oldest sailor
+SELECT SNAME FROM SAILORS_2610 WHERE AGE=(SELECT MAX(AGE) FROM SAILORS_2610);
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--9)Write a query to find name as SAILERNAME,Rating,Age,bname as BOATNAME,Color,Day.
+SELECT SNAME AS SAILORNAME,RATING,AGE,BNAME AS BOATNAME,COLOR,DAY FROM ((RESERVES_2610 R 
+INNER JOIN SAILORS_2610 S ON R.SID=S.SID) INNER JOIN BOATS_2610 B ON R.BID=B.BID);
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--10)Write a query to display the sailor name  starts with letter a and b. 
+SELECT SNAME FROM SAILORS_2610 WHERE SNAME LIKE 'a%' OR SNAME LIKE 'b%';
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--11)Find the names of the Sailors who have reserved at least one boat.
+SELECT SNAME FROM SAILORS_2610 S,RESERVES_2610 R WHERE S.SID=R.SID GROUP BY SNAME;
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--12)Compute increments for the ratings of persons who have sailed two different boats on the same day.
+SELECT distinct S.sname, S.rating+1 AS rating FROM sailors_2610 S, reserves_2610 R1, reserves_2610 R2
+WHERE S.sid=R1.sid AND S.sid=R2.sid AND R1.day = R2.day AND R1.bid<>R2.bid;
+
+-------------------------------------------------------------------------------------------------------------------------
+
+--13)Find the ages of sailors whose name begins and ends with B and has at least 3 characters.
+SELECT AGE FROM SAILORS_2610 WHERE SNAME LIKE 'b%b' AND LENGTH(SNAME)>3; 
